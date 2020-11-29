@@ -1,22 +1,54 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+  <div id="app" class="main-container" :class="{ darktheme: darkThemeEnabled }">
+    <AppHeader
+      @show-add-modal="showAppModal"
+      @switch-night-mode="switchNightMode"
+    />
+    <router-view />
+    <Modal
+      :visible="showAddModal"
+      @close-modal="closeModal"
+      @createwebsite="addWebsite"
+    />
+    <AppFooter />
   </div>
 </template>
-
 <script lang="ts">
-import { Component, Vue } from "vue-property-decorator";
-import HelloWorld from "./components/HelloWorld.vue";
+import { Component, Prop, Vue } from "vue-property-decorator";
+import AppHeader from "@/components/AppHeader.vue";
+import AppFooter from "@/components/AppFooter.vue";
+import Modal from "@/components/Modal.vue";
+import store from "@/store/index";
 
 @Component({
   components: {
-    HelloWorld
+    AppFooter,
+    AppHeader,
+    Modal
   }
 })
-export default class App extends Vue {}
-</script>
+export default class App extends Vue {
+  showAddModal = false;
 
+  @Prop() private msg!: string;
+
+  public showAppModal() {
+    this.showAddModal = true;
+  }
+  public switchNightMode() {
+    store.dispatch("changeTheme");
+  }
+  public closeModal() {
+    this.showAddModal = false;
+  }
+  public addWebsite(website: object) {
+    store.dispatch("addWebsite", website);
+  }
+  get darkThemeEnabled() {
+    return store.getters.darkTheme;
+  }
+}
+</script>
 <style>
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
@@ -24,6 +56,33 @@ export default class App extends Vue {}
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  min-height: 100vh;
+  background: #fff;
+  position: relative;
+  transition: all 0.3s ease;
+}
+body {
+  margin: 0;
+}
+html,
+body {
+  max-width: 100vw;
+  overflow: hidden;
+}
+#nav {
+  padding: 30px;
+}
+
+#nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+#nav a.router-link-exact-active {
+  color: #42b983;
+}
+#app.darktheme {
+  background: #000;
+  color: #6787ff;
 }
 </style>
