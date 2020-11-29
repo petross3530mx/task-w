@@ -61,6 +61,10 @@ export default class App extends Vue {
   position: relative;
   transition: all 0.3s ease;
 }
+#app>*{
+  max-width: 1300px;
+  margin: auto;
+}
 body {
   margin: 0;
 }
